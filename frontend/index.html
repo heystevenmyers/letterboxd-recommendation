@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Compare Letterboxd accounts and find movies you'll both love">
+    <meta name="api-url" content="/api/analyze">
+    <title>Letterboxd Movie Matcher</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎬 Letterboxd Movie Matcher</h1>
+            <p class="subtitle">Find movies you'll both love</p>
+        </header>
+
+        <main>
+            <!-- Input Form -->
+            <section class="input-section">
+                <form id="userForm">
+                    <div class="input-group">
+                        <label for="user1">First Letterboxd Username</label>
+                        <input 
+                            type="text" 
+                            id="user1" 
+                            name="user1" 
+                            placeholder="Enter Letterboxd username"
+                            required
+                        >
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="user2">Second Letterboxd Username (optional)</label>
+                        <input 
+                            type="text" 
+                            id="user2" 
+                            name="user2" 
+                            placeholder="e.g., friendname"
+                        >
+                    </div>
+                    
+                    <button type="submit" id="submitBtn" class="btn-primary">
+                        Find Matches
+                    </button>
+                </form>
+            </section>
+
+            <!-- Loading State -->
+            <section id="loadingSection" class="loading-section hidden">
+                <div class="spinner"></div>
+                <p>Analyzing your movie tastes...</p>
+            </section>
+
+            <!-- Results Section -->
+            <section id="resultsSection" class="results-section hidden">
+                <!-- Stats -->
+                <div class="stats-card">
+                    <h3>📊 Quick Stats</h3>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-value" id="user1Total">-</span>
+                            <span class="stat-label"><span id="user1StatLabel">User 1</span> Movies</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value" id="user2Total">-</span>
+                            <span class="stat-label"><span id="user2StatLabel">User 2</span> Movies</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value" id="commonMovies">-</span>
+                            <span class="stat-label">In Common</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Both Enjoyed -->
+                <div class="recommendation-card">
+                    <h2>🎯 Movies You Both Loved</h2>
+                    <p class="card-description">Movies you both watched and rated 4+ stars</p>
+                    <div id="bothEnjoyed" class="movie-list"></div>
+                </div>
+
+                <!-- Both Hated -->
+                <div class="recommendation-card">
+                    <h2>💔 Movies You Both Hated</h2>
+                    <p class="card-description">Movies you both rated 1 star or below</p>
+                    <div id="bothHated" class="movie-list"></div>
+                </div>
+
+                <!-- User 1 Recommends -->
+                <div class="recommendation-card">
+                    <h2>⭐ <span id="user1Name">User 1</span>'s Top Picks for <span id="user2Name">User 2</span></h2>
+                    <p class="card-description">Movies <span id="user1NameDesc">User 1</span> loved (4.5+ stars) that <span id="user2NameDesc">User 2</span> hasn't seen</p>
+                    <div id="user1Recommends" class="movie-list"></div>
+                </div>
+
+                <!-- User 2 Recommends -->
+                <div class="recommendation-card">
+                    <h2>⭐ <span id="user2NameRec">User 2</span>'s Top Picks for <span id="user1NameRec">User 1</span></h2>
+                    <p class="card-description">Movies <span id="user2NameDescRec">User 2</span> loved (4.5+ stars) that <span id="user1NameDescRec">User 1</span> hasn't seen</p>
+                    <div id="user2Recommends" class="movie-list"></div>
+                </div>
+
+                <!-- New Suggestions -->
+                <div class="recommendation-card">
+                    <h2>🆕 Movies You'd Both Enjoy</h2>
+                    <p class="card-description">AI-powered recommendations based on your shared 5-star favorites</p>
+                    <div id="newSuggestions" class="movie-list">
+                        <p class="empty-state">No recommendations available. Make sure you have at least 3 movies both rated 5 stars.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Error Section -->
+            <section id="errorSection" class="error-section hidden">
+                <div class="error-card">
+                    <h3>⚠️ Oops!</h3>
+                    <p id="errorMessage"></p>
+                    <button onclick="resetForm()" class="btn-secondary">Try Again</button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

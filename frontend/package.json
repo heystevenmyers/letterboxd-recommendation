@@ -1,0 +1,17 @@
+{
+  "name": "letterboxd-movie-matcher",
+  "version": "1.0.0",
+  "description": "Compare Letterboxd accounts and find movies you'll both love",
+  "scripts": {
+    "dev": "python -m http.server 3000",
+    "build": "echo 'No build step needed for static site'"
+  },
+  "keywords": [
+    "letterboxd",
+    "movies",
+    "recommendations"
+  ],
+  "author": "",
+  "license": "MIT"
+}
+
