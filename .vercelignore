@@ -17,3 +17,6 @@ QUICK_START.md
 RUN_NOW.md
 SETUP_*.md
 
+# Note: requirements.txt and runtime.txt MUST NOT be ignored
+# They are needed for Vercel to install Python dependencies
+

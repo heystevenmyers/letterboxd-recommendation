@@ -1,8 +1,22 @@
 {
+  "version": 2,
+  "builds": [
+    {
+      "src": "app.py",
+      "use": "@vercel/python",
+      "config": {
+        "runtime": "python3.9"
+      }
+    }
+  ],
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "/api"
+      "dest": "app.py"
+    },
+    {
+      "source": "/(.*)",
+      "dest": "app.py"
     }
   ],
   "headers": [
