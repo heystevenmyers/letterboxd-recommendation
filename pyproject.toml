@@ -1,0 +1,8 @@
+[project]
+name = "letterboxd-rec"
+version = "1.0.0"
+description = "Letterboxd movie recommendation app"
+
+[project.scripts]
+app = "app:app"
+
