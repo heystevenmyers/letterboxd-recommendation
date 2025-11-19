@@ -1,5 +1,5 @@
 #!/bin/sh
-'''exec' "/Users/stevenmyers/letterboxd project/venv/bin/python3" "$0" "$@"
+'''exec' "/Users/stevenmyers/letterboxd-rec/venv/bin/python3" "$0" "$@"
 ' '''
 import sys
 from tqdm.cli import main

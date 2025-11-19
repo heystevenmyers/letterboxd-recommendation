@@ -31,6 +31,11 @@ def get_ai_recommendations(both_5star_movies, user1_watched, user2_watched):
         print("Warning: ANTHROPIC_API_KEY not set. Skipping AI recommendations.")
         return []
     
+    # Validate API key format (should start with sk-ant-)
+    if not api_key.startswith('sk-ant-'):
+        print("Warning: ANTHROPIC_API_KEY appears to be invalid (should start with 'sk-ant-'). Skipping AI recommendations.")
+        return []
+    
     try:
         # Initialize Anthropic client
         client = Anthropic(api_key=api_key)
@@ -67,18 +72,44 @@ IMPORTANT:
 
 Format your response as a JSON array: [{{"title": "Movie Title", "year": 2023, "reason": "why they'd like it based on the themes"}}]"""
 
-        # Call Claude API
-        message = client.messages.create(
-            model="claude-3-5-sonnet-20241022",
-            max_tokens=2000,
-            messages=[
-                {
-                    "role": "user",
-                    "content": prompt
-                }
-            ],
-            timeout=60.0  # 60 second timeout
-        )
+        # Call Claude API - try multiple models in order of preference
+        models_to_try = [
+            "claude-3-7-sonnet-20250219",  # Latest Sonnet model
+            "claude-3-5-haiku-latest",     # Fallback to Haiku
+            "claude-3-opus-latest",        # Fallback to Opus
+        ]
+        
+        message = None
+        last_error = None
+        
+        for model_name in models_to_try:
+            try:
+                message = client.messages.create(
+                    model=model_name,
+                    max_tokens=2000,
+                    messages=[
+                        {
+                            "role": "user",
+                            "content": prompt
+                        }
+                    ],
+                    timeout=60.0  # 60 second timeout
+                )
+                print(f"DEBUG: Successfully used model: {model_name}")
+                break  # Success, exit the loop
+            except Exception as e:
+                last_error = e
+                error_str = str(e)
+                # Check for model not found errors (404)
+                if '404' in error_str or 'not_found' in error_str.lower() or ('error' in error_str.lower() and 'model' in error_str.lower()):
+                    print(f"DEBUG: Model {model_name} not available, trying next...")
+                    continue  # Try next model
+                else:
+                    # For other errors (like auth), don't try other models
+                    raise  # Re-raise if it's not a 404/model not found error
+        
+        if message is None:
+            raise Exception(f"None of the available models worked. Last error: {last_error}")
         
         # Extract response text
         response_text = message.content[0].text
@@ -122,7 +153,16 @@ Format your response as a JSON array: [{{"title": "Movie Title", "year": 2023, "
             return []
             
     except Exception as e:
-        print(f"Error getting AI recommendations: {e}")
+        error_str = str(e)
+        # Check for authentication errors
+        if '401' in error_str or 'authentication' in error_str.lower() or 'invalid' in error_str.lower() and 'api-key' in error_str.lower():
+            print("Error: Invalid Anthropic API key. Please check your .env file:")
+            print("  1. Make sure ANTHROPIC_API_KEY is set correctly")
+            print("  2. Get a new key from https://console.anthropic.com/")
+            print("  3. Ensure the key starts with 'sk-ant-'")
+            print("  4. Make sure there are no extra spaces or quotes in the .env file")
+        else:
+            print(f"Error getting AI recommendations: {e}")
         return []
 
 
