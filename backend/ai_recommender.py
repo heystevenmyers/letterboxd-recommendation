@@ -65,10 +65,12 @@ Both users have already watched these movies (do not recommend these):
 {chr(10).join(watched_list[:50])}
 
 IMPORTANT: 
-1. Analyze the 5-star movies to find common themes (actors, genres, directors, production companies, composers, cinematographers, etc.)
-2. Focus on patterns and connections between the movies - ignore outliers that don't fit clear themes
-3. Based on these common themes, suggest 10 movies they would both enjoy that they haven't seen yet
-4. Make sure the suggested movies align with the themes you identified
+1. Analyze the 5-star movies to find common themes in actors, genres, directors, composers, cinematographers, etc.
+2. Truly hone in on the themes and connections between the movies - don't just suggest movies that are similar to the ones the users have already watched
+3. Avoid the obvious answers, shy away from the most popular movies and lean towards obscure movies
+4. Focus on patterns and connections between the movies - ignore outliers that don't fit clear themes
+5. Based on these common themes, suggest 10 movies they would both enjoy that they haven't seen yet
+6. Its common for users to not rate movies they have seen. do not reccomend a very popular movie even if it is not on either persons watched list.
 
 Format your response as a JSON array: [{{"title": "Movie Title", "year": 2023, "reason": "why they'd like it based on the themes"}}]"""
 

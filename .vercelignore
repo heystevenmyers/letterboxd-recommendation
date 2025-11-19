@@ -1,0 +1,19 @@
+# Files to ignore when deploying to Vercel
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+.env
+*.log
+.DS_Store
+frontend/
+docs/
+*.md
+setup.*
+TROUBLESHOOTING.md
+QUICK_START.md
+RUN_NOW.md
+SETUP_*.md
+

@@ -13,7 +13,32 @@ import pathlib
 project_root = pathlib.Path(__file__).parent.parent
 load_dotenv(dotenv_path=project_root / '.env')
 
-app = Flask(__name__, static_folder='../frontend', static_url_path='')
+# Note: On Vercel, static files are served from public/ directory automatically
+# We don't use Flask's static_folder on Vercel - it's handled by Vercel's CDN
+# For local development, we serve static files from public/
+import os
+is_vercel = os.getenv('VERCEL') == '1'
+
+if is_vercel:
+    # On Vercel: static files served from public/ automatically, no static_folder needed
+    app = Flask(__name__)
+else:
+    # Local development: serve static files from public/
+    app = Flask(__name__, static_folder='../public', static_url_path='')
+    
+    @app.route('/')
+    def index():
+        """Serve the main HTML page (local dev only)"""
+        return send_from_directory('../public', 'index.html')
+    
+    @app.route('/<path:path>')
+    def serve_static(path):
+        """Serve static files (local dev only)"""
+        ALLOWED_EXTENSIONS = {'.html', '.css', '.js', '.json', '.png', '.jpg', '.jpeg', '.gif', '.svg', '.ico'}
+        if any(path.endswith(ext) for ext in ALLOWED_EXTENSIONS):
+            return send_from_directory('../public', path)
+        return jsonify({'error': 'File not found'}), 404
+
 # Configure CORS to allow all origins (for development)
 # In production, you'd want to restrict this to your actual domain
 CORS(app, resources={
@@ -23,22 +48,6 @@ CORS(app, resources={
         "allow_headers": ["Content-Type", "Authorization"]
     }
 })
-
-# Allowed static file extensions
-ALLOWED_EXTENSIONS = {'.html', '.css', '.js', '.json', '.png', '.jpg', '.jpeg', '.gif', '.svg', '.ico'}
-
-@app.route('/')
-def index():
-    """Serve the main HTML page"""
-    return send_from_directory('../frontend', 'index.html')
-
-@app.route('/<path:path>')
-def serve_static(path):
-    """Serve static files (CSS, JS) - only allow safe file types"""
-    # Only serve files with allowed extensions
-    if any(path.endswith(ext) for ext in ALLOWED_EXTENSIONS):
-        return send_from_directory('../frontend', path)
-    return jsonify({'error': 'File not found'}), 404
 
 @app.route('/api/analyze', methods=['POST', 'OPTIONS'])
 def analyze_users():
